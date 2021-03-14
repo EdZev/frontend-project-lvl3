@@ -1,0 +1,31 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "[![Actions Status](https://github.com/EdZev/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/EdZev/frontend-project-lvl3/actions)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EdZev/frontend-project-lvl3.git"
+  },
+  "author": "EdZev",
+  "type": "module",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EdZev/frontend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/EdZev/frontend-project-lvl3#readme",
+  "devDependencies": {
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.3.1",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3"
+  },
+  "dependencies": {
+    "@jest/globals": "^26.6.2"
+  }
+}
