@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/EdZev/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/EdZev/frontend-project-lvl3/actions)",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,21 +11,38 @@
     "url": "git+https://github.com/EdZev/frontend-project-lvl3.git"
   },
   "author": "EdZev",
-  "type": "module",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/EdZev/frontend-project-lvl3/issues"
   },
   "homepage": "https://github.com/EdZev/frontend-project-lvl3#readme",
+  "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/"
+  },
+  "main": "src/index.js",
   "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.1.3",
     "eslint": "^7.22.0",
     "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.3.1",
+    "html-webpack-plugin": "^5.3.1",
     "jest": "^26.6.3",
-    "jest-cli": "^26.6.3"
+    "jest-cli": "^26.6.3",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.26.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "@jest/globals": "^26.6.2"
+    "bootstrap": "^4.6.0",
+    "jquery": "^3.6.0",
+    "lodash": "^4.17.21",
+    "popper.js": "^1.16.1"
   }
 }
