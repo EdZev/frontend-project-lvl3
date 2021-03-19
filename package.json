@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
