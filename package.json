@@ -4,7 +4,8 @@
   "description": "[![Actions Status](https://github.com/EdZev/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/EdZev/frontend-project-lvl3/actions)",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
