@@ -3,7 +3,7 @@ export default (data) => {
   const xml = parser.parseFromString(data, 'application/xml');
   const parserError = xml.querySelector('parsererror');
   if (parserError) {
-    throw new Error(parserError.textContent);
+    throw new Error('The page at this url contains invalid data');
   }
   const channelTitle = xml.querySelector('channel > title').textContent;
   const channelDescription = xml.querySelector('channel > description').textContent;

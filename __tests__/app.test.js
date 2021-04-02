@@ -41,7 +41,7 @@ test('Form - wrong url', async () => {
   expect(screen.queryByText('The URL mast be valid')).toBeInTheDocument();
 });
 
-test('get data', async () => {
+test('Get data', async () => {
   const scope = nock(proxy)
     .get(`/raw?url=${encodeURIComponent(rssUrl)}`)
     .reply(200, rssData);
@@ -57,8 +57,40 @@ test('get data', async () => {
   scope.done();
 
   await userEvent.type(elements.input, rssUrl);
-  await userEvent.click(elements.submit);
+  userEvent.click(elements.submit);
 
   expect(elements.input).toHaveClass('is-invalid');
   expect(screen.queryByText('This RSS has already been loaded')).toBeInTheDocument();
+});
+
+test('Get wrong data', async () => {
+  const scope = nock(proxy)
+    .get(`/raw?url=${encodeURIComponent(rssUrl)}`)
+    .reply(200, 'wrong data');
+
+  await userEvent.type(elements.input, rssUrl);
+  userEvent.click(elements.submit);
+
+  await waitFor(() => {
+    expect(elements.input).not.toHaveClass('is-invalid');
+    expect(screen.queryByText('Error: The page at this url contains invalid data')).toBeInTheDocument();
+  });
+
+  scope.done();
+});
+
+test('Network error', async () => {
+  const scope = nock(proxy)
+    .get(`/raw?url=${encodeURIComponent(rssUrl)}`)
+    .replyWithError('Network Error');
+
+  await userEvent.type(elements.input, rssUrl);
+  userEvent.click(elements.submit);
+
+  await waitFor(() => {
+    expect(elements.input).not.toHaveClass('is-invalid');
+    expect(screen.queryByText('Error: Network Error')).toBeInTheDocument();
+  });
+
+  scope.done();
 });

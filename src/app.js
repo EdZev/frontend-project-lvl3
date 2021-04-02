@@ -44,7 +44,6 @@ const getRss = (watcher, rssUrl) => axios.get(getFeedUrl(rssUrl))
       status: 'failed',
       error: err,
     };
-    throw err;
   });
 
 export default () => {
