@@ -1,19 +1,11 @@
 ---
-
-plugins:
-  - jest
-  - babel
 env:
-  browser: true
   jest: true
-  node: true
+  browser: true
 extends:
-  - airbnb-base
-  - 'plugin:jest/recommended'
-parserOptions:
-  ecmaVersion: 12
-  sourceType: module
-rules:
-  no-console: 0
-  import/extensions: 0
+  - 'airbnb-base'
+  - plugin:jest/recommended
 
+rules:
+  import/extensions: 0
+  no-param-reassign: 0
