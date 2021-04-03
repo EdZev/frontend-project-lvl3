@@ -1,19 +1,20 @@
 import * as yup from 'yup';
 import axios from 'axios';
+import i18n from './locales';
 import parseRss from './parserRss';
-import watch from './watchers/index';
+import watch from './watchers';
 
 const proxyUrl = 'https://hexlet-allorigins.herokuapp.com';
 
 const getFeedUrl = (rssUrl) => `${proxyUrl}/raw?url=${encodeURIComponent(rssUrl)}`;
 
 const getValidationURL = () => yup.string()
-  .url('The URL mast be valid')
-  .required('This field is required');
+  .url(i18n('invalidUrl'))
+  .required(i18n('fieldRequared'));
 
 const validateURL = (rssUrl, feeds) => {
   const feedsUrl = feeds.map((feed) => feed.url);
-  const validationSchema = getValidationURL().notOneOf(feedsUrl, 'This RSS has already been loaded');
+  const validationSchema = getValidationURL().notOneOf(feedsUrl, i18n('alreadyLoaded'));
   try {
     validationSchema.validateSync(rssUrl);
     return null;

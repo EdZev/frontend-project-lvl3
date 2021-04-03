@@ -38,7 +38,7 @@ test('Form - wrong url', async () => {
   await userEvent.click(elements.submit);
 
   expect(elements.input).toHaveClass('is-invalid');
-  expect(screen.queryByText('The URL mast be valid')).toBeInTheDocument();
+  expect(screen.queryByText('Ссылка должна быть валидным URL')).toBeInTheDocument();
 });
 
 test('Get data', async () => {
@@ -51,7 +51,7 @@ test('Get data', async () => {
 
   await waitFor(() => {
     expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText('Rss loaded successfully')).toBeInTheDocument();
+    expect(screen.queryByText('Rss успешно загружен')).toBeInTheDocument();
   });
 
   scope.done();
@@ -60,7 +60,7 @@ test('Get data', async () => {
   userEvent.click(elements.submit);
 
   expect(elements.input).toHaveClass('is-invalid');
-  expect(screen.queryByText('This RSS has already been loaded')).toBeInTheDocument();
+  expect(screen.queryByText('Этот поток уже загружен')).toBeInTheDocument();
 });
 
 test('Get wrong data', async () => {
@@ -73,7 +73,7 @@ test('Get wrong data', async () => {
 
   await waitFor(() => {
     expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText('Error: The page at this url contains invalid data')).toBeInTheDocument();
+    expect(screen.queryByText('Error: Страница по этой ссылке содержит не верные данные')).toBeInTheDocument();
   });
 
   scope.done();

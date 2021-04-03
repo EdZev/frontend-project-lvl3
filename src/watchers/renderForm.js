@@ -1,3 +1,5 @@
+import i18n from '../locales';
+
 const renderSending = (fields) => {
   const { submit, input, feedback } = fields;
   submit.disabled = true;
@@ -27,7 +29,7 @@ const renderFinished = (fields) => {
   input.removeAttribute('readOnly');
   feedback.classList.remove('text-danger');
   feedback.classList.add('text-success');
-  feedback.textContent = 'Rss loaded successfully';
+  feedback.textContent = i18n('successLoaded');
 };
 
 export default (state, fields) => {

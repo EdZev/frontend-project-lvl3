@@ -1,9 +1,11 @@
+import i18n from './locales';
+
 export default (data) => {
   const parser = new DOMParser();
   const xml = parser.parseFromString(data, 'application/xml');
   const parserError = xml.querySelector('parsererror');
   if (parserError) {
-    throw new Error('The page at this url contains invalid data');
+    throw new Error(i18n('invalidData'));
   }
   const channelTitle = xml.querySelector('channel > title').textContent;
   const channelDescription = xml.querySelector('channel > description').textContent;
