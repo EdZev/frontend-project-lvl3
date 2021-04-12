@@ -5,7 +5,7 @@ export default (data) => {
   const xml = parser.parseFromString(data, 'application/xml');
   const parserError = xml.querySelector('parsererror');
   if (parserError) {
-    throw new Error(i18n('invalidData'));
+    throw new Error(i18n('form.invalidData'));
   }
   const channelTitle = xml.querySelector('channel > title').textContent;
   const channelDescription = xml.querySelector('channel > description').textContent;
