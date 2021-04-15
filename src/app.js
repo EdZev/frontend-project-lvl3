@@ -26,62 +26,81 @@ const validateURL = (rssUrl, feeds) => {
   }
 };
 
-const postsListener = (watcher) => {
+const postsListener = (watchedState) => {
   const buttons = document.querySelectorAll('.btn-sm');
-  const handlerClick = (e) => {
-    const target = document.querySelector(`a[data-id="${e.target.dataset.id}"]`);
-    const targetUrl = target.href;
-    const post = watcher.posts.find((el) => el.link === targetUrl);
-    watcher.postModal = post;
-  };
   buttons.forEach((button) => {
-    button.addEventListener('click', handlerClick);
+    const postsHandler = (evt) => {
+      const { postsLoaded, postsVisited } = watchedState.posts;
+      const targetId = evt.target.dataset.id;
+      const target = document.querySelector(`a[data-id="${targetId}"]`);
+      const targetUrl = target.href;
+      const postTarget = postsLoaded.find((el) => el.link === targetUrl);
+      const isVisited = postsVisited.includes(targetUrl);
+      const newPostVisited = (isVisited) ? postsVisited : [targetUrl, ...postsVisited];
+      watchedState.posts = {
+        postsLoaded: watchedState.posts.postsLoaded,
+        postModal: postTarget,
+        postsVisited: newPostVisited,
+      };
+      postsListener(watchedState);
+    };
+    button.addEventListener('click', postsHandler);
   });
 };
 
 const getPosts = (feedData, url) => feedData.items.map((item) => ({ ...item, feedUrl: url }));
 
-const updatePosts = (watcher) => {
-  const { feeds, posts } = watcher;
+const updatePosts = (watchedState) => {
+  const { feeds } = watchedState;
+  const { postsLoaded } = watchedState.posts;
   if (feeds.length === 0) {
-    return setTimeout(() => updatePosts(watcher), chekingTimeout);
+    return setTimeout(() => updatePosts(watchedState), chekingTimeout);
   }
   const newPosts = feeds.map(({ url }) => axios.get(getFeedUrl(url), { timeout: downloadTimeout })
     .then((response) => {
       const feedData = parseRss(response.data);
-      const oldPosts = posts.filter(({ feedUrl }) => feedUrl === url);
+      const oldPosts = postsLoaded.filter(({ feedUrl }) => feedUrl === url);
       const newlyReceivedPosts = getPosts(feedData, url);
       return _.differenceWith(newlyReceivedPosts, oldPosts, _.isEqual);
     }));
 
   return Promise.all(newPosts)
     .then((feedPosts) => {
-      watcher.posts = [..._.flatten(feedPosts), ...watcher.posts];
-      postsListener(watcher);
+      const result = _.flatten(feedPosts);
+      watchedState.posts = {
+        postsLoaded: [...result, ...watchedState.posts.postsLoaded],
+        postModal: watchedState.posts.postModal,
+        postsVisited: watchedState.posts.postsVisited,
+      };
+      postsListener(watchedState);
     })
-    .finally(() => setTimeout(() => updatePosts(watcher), chekingTimeout));
+    .finally(() => setTimeout(() => updatePosts(watchedState), chekingTimeout));
 };
 
-const getRss = (watcher, rssUrl) => axios.get(getFeedUrl(rssUrl), { timeout: downloadTimeout })
+const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl), { timeout: downloadTimeout })
   .then((response) => {
     const feedData = parseRss(response.data);
     const feed = { url: rssUrl, title: feedData.title, description: feedData.description };
     const posts = getPosts(feedData, rssUrl);
-    watcher.feeds = [feed, ...watcher.feeds];
-    watcher.posts = [...posts, ...watcher.posts];
-    watcher.loadingState = {
+    watchedState.feeds = [feed, ...watchedState.feeds];
+    watchedState.posts = {
+      postsLoaded: [...posts, ...watchedState.posts.postsLoaded],
+      postModal: watchedState.posts.postModal,
+      postsVisited: watchedState.posts.postsVisited,
+    };
+    watchedState.loadingState = {
       stutus: 'idle',
       error: null,
     };
-    watcher.form = {
+    watchedState.form = {
       status: 'finished',
       valid: null,
       error: null,
     };
-    postsListener(watcher);
+    postsListener(watchedState);
   })
   .catch((err) => {
-    watcher.loadingState = {
+    watchedState.loadingState = {
       status: 'failed',
       error: err,
     };
@@ -90,8 +109,11 @@ const getRss = (watcher, rssUrl) => axios.get(getFeedUrl(rssUrl), { timeout: dow
 export default () => {
   const state = {
     feeds: [],
-    posts: [],
-    postModal: null,
+    posts: {
+      postsLoaded: [],
+      postModal: '',
+      postsVisited: [],
+    },
     loadingState: {
       status: 'idle',
       error: null,
@@ -103,18 +125,15 @@ export default () => {
     },
   };
   const fields = {
-    body: document.querySelector('body'),
     form: document.querySelector('.rss-form'),
     input: document.querySelector('.rss-form input'),
     submit: document.querySelector('.rss-form button[type="submit"]'),
     feedback: document.querySelector('.feedback'),
     feedsField: document.querySelector('.feeds'),
     postsField: document.querySelector('.posts'),
-    modalField: document.getElementById('modal'),
     modalTitle: document.querySelector('.modal-title'),
     modalBody: document.querySelector('.modal-body'),
     modalLink: document.querySelector('.full-article'),
-    modalButtons: document.querySelectorAll('button[data-dismiss="modal"]'),
   };
 
   const watchedState = watch(state, fields);

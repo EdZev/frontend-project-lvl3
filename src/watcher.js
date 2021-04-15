@@ -4,7 +4,6 @@ import {
   renderloading,
   renderFeeds,
   renderPosts,
-  renderModal,
 } from './renders';
 
 export default (state, fields) => {
@@ -14,7 +13,6 @@ export default (state, fields) => {
       loadingState,
       feeds,
       posts,
-      postModal,
     } = state;
     switch (path) {
       case 'form':
@@ -28,9 +26,6 @@ export default (state, fields) => {
         break;
       case 'posts':
         renderPosts(posts, fields);
-        break;
-      case 'postModal':
-        renderModal(postModal, fields);
         break;
       default:
         throw new Error('No such path of state is defined');

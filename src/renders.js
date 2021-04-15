@@ -83,13 +83,14 @@ const renderFeeds = (feeds, fields) => {
   feedsField.append(h2, ul);
 };
 
-const getPostElement = (post, index) => {
+const getPostElement = (post, index, postsVisited) => {
   const { title, link } = post;
   const li = document.createElement('li');
   li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
+  const postVisited = postsVisited.includes(`${link}`) ? 'font-weight-normal' : 'font-weight-bold';
   const a = document.createElement('a');
   a.href = link;
-  a.classList.add('font-weight-bold');
+  a.classList.add(postVisited);
   a.setAttribute('target', '_blank');
   a.setAttribute('rel', 'noopener noreferrer');
   a.setAttribute('data-id', index);
@@ -107,17 +108,6 @@ const getPostElement = (post, index) => {
   return li;
 };
 
-const renderPosts = (posts, fields) => {
-  const { postsField } = fields;
-  const h2 = document.createElement('h2');
-  h2.textContent = i18n('posts');
-  const ul = document.createElement('ul');
-  ul.classList.add('list-group');
-  ul.append(...posts.map((post, index) => getPostElement(post, index)));
-  postsField.innerHTML = '';
-  postsField.append(h2, ul);
-};
-
 const renderModal = (postModal, fields) => {
   const { title, link, description } = postModal;
   const { modalTitle, modalBody, modalLink } = fields;
@@ -126,10 +116,22 @@ const renderModal = (postModal, fields) => {
   modalLink.href = link;
 };
 
+const renderPosts = (posts, fields) => {
+  const { postsField } = fields;
+  const { postsLoaded, postModal, postsVisited } = posts;
+  renderModal(postModal, fields);
+  const h2 = document.createElement('h2');
+  h2.textContent = i18n('posts');
+  const ul = document.createElement('ul');
+  ul.classList.add('list-group');
+  ul.append(...postsLoaded.map((post, index) => getPostElement(post, index, postsVisited)));
+  postsField.innerHTML = '';
+  postsField.append(h2, ul);
+};
+
 export {
   renderForm,
   renderloading,
   renderFeeds,
   renderPosts,
-  renderModal,
 };
