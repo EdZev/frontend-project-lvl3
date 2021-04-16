@@ -2,11 +2,13 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/EdZev/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/EdZev/frontend-project-lvl3/actions)",
-  "private": true,
+  "main": "src/init.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
-    "build": "webpack"
+    "babel-node": "babel-node",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -22,9 +24,10 @@
     "verbose": true,
     "testURL": "http://localhost/"
   },
-  "main": "src/app.js",
   "devDependencies": {
-    "@babel/core": "^7.13.10",
+    "@babel/cli": "^7.13.14",
+    "@babel/core": "^7.13.15",
+    "@babel/node": "^7.13.13",
     "@babel/preset-env": "^7.13.10",
     "@testing-library/dom": "^7.30.1",
     "@testing-library/jest-dom": "^5.11.10",
