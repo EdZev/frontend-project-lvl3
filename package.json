@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/EdZev/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/EdZev/frontend-project-lvl3/actions)",
-  "main": "src/index.js",
+  "main": "src/app.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
@@ -25,14 +25,11 @@
     "testURL": "http://localhost/"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.14",
     "@babel/core": "^7.13.15",
-    "@babel/node": "^7.13.13",
     "@babel/preset-env": "^7.13.10",
     "@testing-library/dom": "^7.30.1",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/user-event": "^13.0.16",
-    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.2.2",
