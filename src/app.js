@@ -79,7 +79,9 @@ const updatePosts = (watchedState) => {
 
 const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl), { timeout: downloadTimeout })
   .then((response) => {
+    console.log('request!!!', rssUrl)
     const feedData = parseRss(response.data);
+    console.log(feedData);
     const feed = { url: rssUrl, title: feedData.title, description: feedData.description };
     const posts = getPosts(feedData, rssUrl);
     watchedState.feeds = [feed, ...watchedState.feeds];
