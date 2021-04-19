@@ -25,6 +25,7 @@
     "testURL": "http://localhost/"
   },
   "devDependencies": {
+    "@babel/cli": "^7.13.14",
     "@babel/core": "^7.13.15",
     "@babel/preset-env": "^7.13.10",
     "@testing-library/dom": "^7.30.1",
