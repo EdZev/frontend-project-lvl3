@@ -5,7 +5,6 @@ import i18n from './locales';
 import parseRss from './parserRss';
 import watch from './watcher';
 
-const downloadTimeout = 10000;
 const chekingTimeout = 5000;
 
 const proxyUrl = 'https://hexlet-allorigins.herokuapp.com';
@@ -79,7 +78,6 @@ const updatePosts = (watchedState) => {
 
 const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl))
   .then((response) => {
-    console.log(response.data);
     const feedData = parseRss(response.data.contents);
     const feed = { url: rssUrl, title: feedData.title, description: feedData.description };
     const posts = getPosts(feedData, rssUrl);
