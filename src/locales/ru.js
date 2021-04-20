@@ -4,7 +4,7 @@ export default {
       successLoaded: 'Rss успешно загружен',
       invalidUrl: 'Ссылка должна быть валидным URL',
       fieldRequared: 'Это обязательное поле',
-      alreadyLoaded: 'Этот поток уже загружен',
+      alreadyLoaded: 'RSS уже существует',
       invalidData: 'Страница по этой ссылке содержит не верные данные',
     },
     feeds: 'Фиды',
