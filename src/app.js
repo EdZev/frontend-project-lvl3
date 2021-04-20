@@ -9,7 +9,7 @@ const downloadTimeout = 10000;
 const chekingTimeout = 5000;
 
 const proxyUrl = 'https://hexlet-allorigins.herokuapp.com';
-const getFeedUrl = (rssUrl) => `${proxyUrl}/raw?url=${encodeURIComponent(rssUrl)}`;
+const getFeedUrl = (rssUrl) => `${proxyUrl}/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`;
 
 const getValidationURL = () => yup.string()
   .url(i18n('form.invalidUrl'))
@@ -56,9 +56,9 @@ const updatePosts = (watchedState) => {
   if (feeds.length === 0) {
     return setTimeout(() => updatePosts(watchedState), chekingTimeout);
   }
-  const newPosts = feeds.map(({ url }) => axios.get(getFeedUrl(url), { timeout: downloadTimeout })
+  const newPosts = feeds.map(({ url }) => axios.get(getFeedUrl(url))
     .then((response) => {
-      const feedData = parseRss(response.data);
+      const feedData = parseRss(response.data.contents);
       const oldPosts = postsLoaded.filter(({ feedUrl }) => feedUrl === url);
       const newlyReceivedPosts = getPosts(feedData, url);
       return _.differenceWith(newlyReceivedPosts, oldPosts, _.isEqual);
@@ -77,9 +77,10 @@ const updatePosts = (watchedState) => {
     .finally(() => setTimeout(() => updatePosts(watchedState), chekingTimeout));
 };
 
-const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl), { timeout: downloadTimeout })
+const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl))
   .then((response) => {
-    const feedData = parseRss(response.data);
+    console.log(response.data);
+    const feedData = parseRss(response.data.contents);
     const feed = { url: rssUrl, title: feedData.title, description: feedData.description };
     const posts = getPosts(feedData, rssUrl);
     watchedState.feeds = [feed, ...watchedState.feeds];

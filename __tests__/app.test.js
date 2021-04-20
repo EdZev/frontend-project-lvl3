@@ -14,7 +14,7 @@ const getFixturePath = (filename) => path.join('./', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 const proxy = 'https://hexlet-allorigins.herokuapp.com';
 const rssUrl = 'http://lorem-rss.herokuapp.com/feed?unit=second&interval=30';
-const rssData = readFile('rss.xml');
+const rssData = { contents: readFile('rss.xml') };
 
 const userEvent = testingLibraryUserEvent;
 axios.defaults.adapter = httpAdapter;
@@ -43,7 +43,7 @@ test('Form - wrong url', async () => {
 
 test('Get data', async () => {
   const scope = nock(proxy)
-    .get(`/raw?url=${encodeURIComponent(rssUrl)}`)
+    .get(`/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`)
     .reply(200, rssData);
 
   await userEvent.type(elements.input, rssUrl);
@@ -51,7 +51,7 @@ test('Get data', async () => {
 
   await waitFor(() => {
     expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText('Rss успешно загружен')).toBeInTheDocument();
+    expect(screen.queryByText(/RSS успешно загружен/i)).toBeInTheDocument();
   });
 
   scope.done();
@@ -60,12 +60,12 @@ test('Get data', async () => {
   userEvent.click(elements.submit);
 
   expect(elements.input).toHaveClass('is-invalid');
-  expect(screen.queryByText('Этот поток уже загружен')).toBeInTheDocument();
+  expect(screen.queryByText(/Этот поток уже загружен/i)).toBeInTheDocument();
 });
 
 test('Get wrong data', async () => {
   const scope = nock(proxy)
-    .get(`/raw?url=${encodeURIComponent(rssUrl)}`)
+    .get(`/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`)
     .reply(200, 'wrong data');
 
   await userEvent.type(elements.input, rssUrl);
@@ -73,7 +73,7 @@ test('Get wrong data', async () => {
 
   await waitFor(() => {
     expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText('Error: Страница по этой ссылке содержит не верные данные')).toBeInTheDocument();
+    expect(screen.queryByText(/Error: Страница по этой ссылке содержит не верные данные/i)).toBeInTheDocument();
   });
 
   scope.done();
@@ -81,7 +81,7 @@ test('Get wrong data', async () => {
 
 test('Network error', async () => {
   const scope = nock(proxy)
-    .get(`/raw?url=${encodeURIComponent(rssUrl)}`)
+    .get(`/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`)
     .replyWithError('Network Error');
 
   await userEvent.type(elements.input, rssUrl);
@@ -89,7 +89,7 @@ test('Network error', async () => {
 
   await waitFor(() => {
     expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText('Error: Network Error')).toBeInTheDocument();
+    expect(screen.queryByText(/Error: Network Error/i)).toBeInTheDocument();
   });
 
   scope.done();
