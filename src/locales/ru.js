@@ -5,7 +5,7 @@ export default {
       invalidUrl: 'Ссылка должна быть валидным URL',
       fieldRequared: 'Это обязательное поле',
       alreadyLoaded: 'RSS уже существует',
-      invalidData: 'Страница по этой ссылке содержит не верные данные',
+      invalidData: 'Ресурс не содержит валидный RSS',
     },
     feeds: 'Фиды',
     posts: 'Поcты',
