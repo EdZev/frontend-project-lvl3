@@ -19,16 +19,14 @@ const rssData = { contents: readFile('rss.xml') };
 const userEvent = testingLibraryUserEvent;
 axios.defaults.adapter = httpAdapter;
 
-let elements;
+const elements = {};
 
 beforeEach(async () => {
   const initHtml = readFile('index.html').toString();
   document.body.innerHTML = initHtml;
   run();
-  elements = {
-    submit: screen.getByRole('button', { name: 'add' }),
-    input: screen.getByRole('textbox', { name: 'url' }),
-  };
+  elements.submit = screen.getByRole('button', { name: 'add' });
+  elements.input = screen.getByRole('textbox', { name: 'url' });
 });
 
 test('Form - wrong url', async () => {
