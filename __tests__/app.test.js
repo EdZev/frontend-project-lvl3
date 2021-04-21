@@ -89,7 +89,7 @@ test('Network error', async () => {
 
   await waitFor(() => {
     expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText(/Error: Network Error/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Ошибка сети/i)).toBeInTheDocument();
   });
 
   scope.done();

@@ -6,6 +6,7 @@ export default {
       fieldRequared: 'Это обязательное поле',
       alreadyLoaded: 'RSS уже существует',
       invalidData: 'Ресурс не содержит валидный RSS',
+      networkError: 'Ошибка сети',
     },
     feeds: 'Фиды',
     posts: 'Поcты',

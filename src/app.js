@@ -99,9 +99,10 @@ const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl))
     postsListener(watchedState);
   })
   .catch((err) => {
+    const error = (err.message === 'invalidData') ? 'form.invalidData' : 'form.networkError';
     watchedState.loadingState = {
       status: 'failed',
-      error: err,
+      error: i18n(error),
     };
   });
 
