@@ -2,13 +2,23 @@ import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
 import i18n from './locales';
-import parseRss from './parserRss';
+import parserRss from './parserRss';
 import watch from './watcher';
 
 const chekingTimeout = 5000;
 
-const proxyUrl = 'https://hexlet-allorigins.herokuapp.com';
-const getFeedUrl = (rssUrl) => `${proxyUrl}/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`;
+const proxyUrl = 'https://hexlet-allorigins.herokuapp.com/get?';
+const options = 'disableCache=true';
+const getFeedUrl = (rssUrl) => `${proxyUrl}${options}&url=${encodeURIComponent(rssUrl)}`;
+
+const loadPosts = (rssUrl, availablePosts = []) => axios.get(getFeedUrl(rssUrl))
+  .then((response) => {
+    const feedData = parserRss(response.data.contents);
+    const loadedPosts = feedData.items.map((item) => ({ ...item, feedUrl: rssUrl }));
+    const feed = { url: rssUrl, title: feedData.title, description: feedData.description };
+    const posts = _.differenceWith(loadedPosts, availablePosts, _.isEqual);
+    return { feed, posts };
+  });
 
 const getValidationURL = () => yup.string()
   .url(i18n('form.invalidUrl'))
@@ -47,27 +57,20 @@ const postsListener = (watchedState) => {
   });
 };
 
-const getPosts = (feedData, url) => feedData.items.map((item) => ({ ...item, feedUrl: url }));
-
 const updatePosts = (watchedState) => {
   const { feeds } = watchedState;
   const { postsLoaded } = watchedState.posts;
   if (feeds.length === 0) {
     return setTimeout(() => updatePosts(watchedState), chekingTimeout);
   }
-  const newPosts = feeds.map(({ url }) => axios.get(getFeedUrl(url))
-    .then((response) => {
-      const feedData = parseRss(response.data.contents);
-      const oldPosts = postsLoaded.filter(({ feedUrl }) => feedUrl === url);
-      const newlyReceivedPosts = getPosts(feedData, url);
-      return _.differenceWith(newlyReceivedPosts, oldPosts, _.isEqual);
-    }));
 
-  return Promise.all(newPosts)
+  const promises = feeds.map(({ url }) => loadPosts(url, postsLoaded));
+
+  return Promise.all(promises)
     .then((feedPosts) => {
-      const result = _.flatten(feedPosts);
+      const newPosts = feedPosts.reduce((acc, { posts }) => [...acc, ...posts], []);
       watchedState.posts = {
-        postsLoaded: [...result, ...watchedState.posts.postsLoaded],
+        postsLoaded: [...newPosts, ...watchedState.posts.postsLoaded],
         postModal: watchedState.posts.postModal,
         postsVisited: watchedState.posts.postsVisited,
       };
@@ -76,11 +79,9 @@ const updatePosts = (watchedState) => {
     .finally(() => setTimeout(() => updatePosts(watchedState), chekingTimeout));
 };
 
-const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl))
-  .then((response) => {
-    const feedData = parseRss(response.data.contents);
-    const feed = { url: rssUrl, title: feedData.title, description: feedData.description };
-    const posts = getPosts(feedData, rssUrl);
+const loadRss = (watchedState, rssUrl) => loadPosts(rssUrl)
+  .then((data) => {
+    const { feed, posts } = data;
     watchedState.feeds = [feed, ...watchedState.feeds];
     watchedState.posts = {
       postsLoaded: [...posts, ...watchedState.posts.postsLoaded],
@@ -93,7 +94,6 @@ const getRss = (watchedState, rssUrl) => axios.get(getFeedUrl(rssUrl))
     };
     watchedState.form = {
       status: 'finished',
-      valid: null,
       error: null,
     };
     postsListener(watchedState);
@@ -120,7 +120,6 @@ export default () => {
     },
     form: {
       status: 'filling',
-      valid: null,
       error: null,
     },
   };
@@ -148,16 +147,14 @@ export default () => {
     if (error) {
       watchedState.form = {
         status: 'filling',
-        valid: false,
         error,
       };
       return;
     }
     watchedState.form = {
       status: 'sending',
-      valid: true,
       error,
     };
-    getRss(watchedState, rssUrl);
+    loadRss(watchedState, rssUrl);
   });
 };

@@ -6,7 +6,7 @@ import testingLibraryUserEvent from '@testing-library/user-event';
 import nock from 'nock';
 import axios from 'axios';
 import httpAdapter from 'axios/lib/adapters/http';
-import run from '../src/app.js';
+import run from '../src/init';
 
 nock.disableNetConnect();
 
