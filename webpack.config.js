@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
@@ -14,7 +15,7 @@ module.exports = {
       {
         test: /\.css$/i,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
         ],
       },
@@ -25,5 +26,6 @@ module.exports = {
       template: 'index.html',
       favicon: 'favicon.ico',
     }),
+    new MiniCssExtractPlugin(),
   ],
 };
