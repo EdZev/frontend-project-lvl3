@@ -53,12 +53,11 @@ export const markVisitedLinks = (watchedState) => {
     addVisitedPost(watchedState, link);
     markVisitedLinks(watchedState);
   });
-};
 
-export const markViewedModal = (watchedState) => {
-  $('#modal').on('show.bs.modal', (evt) => {
-    const { relatedTarget } = evt;
-    const link = $(relatedTarget).prev()[0].href;
+  $('div.posts button').on('click', (evt) => {
+    const id = evt.target.getAttribute('data-id');
+    const elementLink = $(`a[data-id=${id}]`)[0];
+    const link = elementLink.href;
     addVisitedPost(watchedState, link);
     markVisitedLinks(watchedState);
   });

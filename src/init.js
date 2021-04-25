@@ -4,7 +4,6 @@ import {
   validateURL,
   loadPosts,
   markVisitedLinks,
-  markViewedModal,
 } from './utils';
 
 const chekingTimeout = 5000;
@@ -106,7 +105,5 @@ export default () => {
       error,
     };
     loadRss(watchedState, rssUrl);
-
-    markViewedModal(watchedState);
   });
 };
