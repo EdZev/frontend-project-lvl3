@@ -92,3 +92,43 @@ test('Network error', async () => {
 
   scope.done();
 });
+
+test('Modal', async () => {
+  const scope = nock(proxy)
+    .get(`/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`)
+    .reply(200, rssData);
+
+  await userEvent.type(elements.input, rssUrl);
+  await userEvent.click(elements.submit);
+
+  await waitFor(() => {
+    expect(elements.input).not.toHaveClass('is-invalid');
+    expect(screen.queryByText(/RSS успешно загружен/i)).toBeInTheDocument();
+  });
+
+  const buttons = screen.getAllByText('Просмотр');
+  await userEvent.click(buttons[0]);
+
+  await waitFor(() => {
+    const elementLink = screen.getAllByText(/Lorem ipsum 2021-04-02T05:35:00Z/i)[1];
+    expect(elementLink).not.toHaveClass('font-weight-bold');
+    expect(elementLink).toHaveClass('font-weight-normal');
+    expect(screen.queryByText(/Non est elit nisi et eu./i)).toBeInTheDocument();
+  });
+
+  const namePost = screen.getByText(/Lorem ipsum 2021-04-02T05:34:30Z/i);
+  await userEvent.click(namePost);
+
+  await waitFor(() => {
+    const namePost2 = screen.getAllByText(/Lorem ipsum 2021-04-02T05:34:30Z/i)[1];
+    expect(namePost2).not.toHaveClass('font-weight-bold');
+    expect(namePost2).toHaveClass('font-weight-normal');
+  });
+
+  userEvent.click(buttons[3]);
+  await waitFor(() => {
+    expect(screen.queryByText(/Sunt labore aliquip ipsum exercitation enim id do nisi./i)).toBeInTheDocument();
+  });
+
+  scope.done();
+});
