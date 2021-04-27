@@ -61,36 +61,29 @@ test('Get data', async () => {
   expect(screen.queryByText(/RSS уже существует/i)).toBeInTheDocument();
 });
 
-test('Get wrong data', async () => {
-  const scope = nock(proxy)
-    .get(`/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`)
-    .reply(200, 'wrong data');
+const items = [
+  ['wrong data', 200, /Ресурс не содержит валидный RSS/i],
+  ['Network Error', 408, /Ошибка сети/i],
+];
+describe('test with describe', () => {
+  test.each(items)(
+    'test %p',
+    async (res, code, message) => {
+      const scope = nock(proxy)
+        .get(`/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`)
+        .reply(code, res);
 
-  await userEvent.type(elements.input, rssUrl);
-  userEvent.click(elements.submit);
+      await userEvent.type(elements.input, rssUrl);
+      userEvent.click(elements.submit);
 
-  await waitFor(() => {
-    expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText(/Ресурс не содержит валидный RSS/i)).toBeInTheDocument();
-  });
+      await waitFor(() => {
+        expect(elements.input).not.toHaveClass('is-invalid');
+        expect(screen.queryByText(message)).toBeInTheDocument();
+      });
 
-  scope.done();
-});
-
-test('Network error', async () => {
-  const scope = nock(proxy)
-    .get(`/get?disableCache=true&url=${encodeURIComponent(rssUrl)}`)
-    .replyWithError('Network Error');
-
-  await userEvent.type(elements.input, rssUrl);
-  userEvent.click(elements.submit);
-
-  await waitFor(() => {
-    expect(elements.input).not.toHaveClass('is-invalid');
-    expect(screen.queryByText(/Ошибка сети/i)).toBeInTheDocument();
-  });
-
-  scope.done();
+      scope.done();
+    },
+  );
 });
 
 test('Modal', async () => {
